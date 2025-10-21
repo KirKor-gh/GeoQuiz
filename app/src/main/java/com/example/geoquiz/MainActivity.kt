@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 data class Question(
     val text: String,
     val answer: Boolean
@@ -69,6 +71,7 @@ fun GeoQuiz(modifier: Modifier = Modifier) {
     var indexQuestion by remember { mutableStateOf(0) }
     var showAnswerButtons by remember { mutableStateOf(true) }
     var correctAnswers by remember { mutableStateOf(0) }
+    var showResult by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -86,7 +89,7 @@ fun GeoQuiz(modifier: Modifier = Modifier) {
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
-                modifier = Modifier.padding(start = 10.dp)
+                modifier = Modifier.padding(start = 150.dp)
             )
         }
         // question
@@ -116,6 +119,10 @@ fun GeoQuiz(modifier: Modifier = Modifier) {
                             correctAnswers++
                         }
                         showAnswerButtons = false
+
+                        if (indexQuestion == questions.size - 1) {
+                            showResult = true
+                        }
                     },
                     modifier = Modifier
                         .width(90.dp)
@@ -134,6 +141,10 @@ fun GeoQuiz(modifier: Modifier = Modifier) {
                             correctAnswers++
                         }
                         showAnswerButtons = false
+
+                        if (indexQuestion == questions.size - 1) {
+                            showResult = true
+                        }
                     },
                     modifier = Modifier
                         .width(90.dp)
@@ -168,6 +179,33 @@ fun GeoQuiz(modifier: Modifier = Modifier) {
                 }
             }
         }
+    }
+    //results
+    if (showResult) {
+        AlertDialog(
+            onDismissRequest = {
+                showResult = false
+            },
+            title = {
+                Text("Результаты", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text("Всего: $correctAnswers из ${questions.size}")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showResult = false
+                        indexQuestion = 0
+                        correctAnswers = 0
+                        showAnswerButtons = true
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
+                ) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }
 
